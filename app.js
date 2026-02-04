@@ -28,7 +28,7 @@ const switchBtn = document.getElementById("switchBtn");
 const statusBadge = document.getElementById("statusBadge");
 
 // 고정 이메일
-const EMAIL = "eldotemp01@gmail.com";
+const EMAIL = "sldpfy2@gmail.com";
 
 // 로그인 함수
 // 로그인 함수
@@ -121,4 +121,5 @@ logoutBtn.addEventListener("click", handleLogout);
 
 
 //
+
 
