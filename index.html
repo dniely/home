@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 Control Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(-45deg, #3b82f6, #ffffff);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
+      font-family: 'Pretendard', sans-serif;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container { width: 100%; max-width: 400px; padding: 20px; }
+    .card {
+      background: #fff; padding: 40px; border-radius: 28px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column; gap: 32px; align-items: center;
+    }
+
+    .header { text-align:center; }
+    .header h1 { font-size:2.8rem; font-weight:900; }
+    .status-badge {
+      font-size:14px; font-weight:700; padding:10px 20px; border-radius:50px;
+      text-transform:uppercase; transition:all 0.3s ease; margin-top:8px;
+    }
+    .status-badge.online { background:#e8f5e9; color:#2e7d32; }
+    .status-badge.offline { background:#ffebee; color:#c62828; }
+
+    .input-group { display:flex; flex-direction:column; gap:12px; width:100%; }
+    input {
+      width:100%; padding:16px; border-radius:12px; border:2px solid #e5e7eb;
+      font-size:18px; font-weight:600; outline:none; transition:0.25s;
+    }
+    input:focus { border-color:#3b82f6; background:#f0f7ff; }
+
+    .btn {
+      width:100%; padding:16px; border:none; border-radius:12px;
+      font-size:18px; font-weight:700; cursor:pointer; transition:0.2s;
+    }
+    .login-btn { background: linear-gradient(135deg,#3b82f6 0%,#2563eb 100%); color:#fff; }
+    .login-btn:hover { transform:translateY(-2px); }
+
+    .control-section { display:flex; flex-direction:column; gap:24px; width:100%; align-items:center; }
+    .switch-btn {
+      width:120px; height:120px; border-radius:50%;
+      border:none; background:#d32f2f; color:#fff;
+      font-size:24px; font-weight:900; cursor:pointer;
+      transition:all 0.25s ease;
+    }
+    .switch-btn.on { background:#10b981; }
+
+    [data-hidden] { display:none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <!-- Header -->
+      <div class="header">
+        <h1>ESP32</h1>
+        <div id="statusBadge" class="status-badge offline">Offline</div>
+      </div>
+
+      <!-- Login -->
+      <div id="authBox" class="input-group">
+        <input id="passwordField" type="text" placeholder="비밀번호">
+        <button id="loginBtn" class="btn login-btn">로그인</button>
+      </div>
+
+      <!-- Control -->
+      <div id="controlBox" class="control-section" data-hidden>
+        <button id="switchBtn" class="switch-btn">OFF</button>
+        <button id="logoutBtn" class="btn logout-btn">로그아웃</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
