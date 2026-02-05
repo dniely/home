@@ -1,90 +1,338 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALpha_HOMES</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(-45deg, #3b82f6, #ffffff);
-      background-size: 400% 400%;
-      animation: gradientBG 12s ease infinite;
-      font-family: 'Pretendard', sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALpha_HOMES</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="icoico (1).png">
 
-    .container { width: 100%; max-width: 400px; padding: 20px; }
-    .card {
-      background: #fff; padding: 40px; border-radius: 28px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.08);
-      display: flex; flex-direction: column; gap: 32px; align-items: center;
-    }
+<style>
+:root{
+--primary:#6366f1;
+--secondary:#ec4899;
+--accent:#8b5cf6;
+--bg-gradient:linear-gradient(-45deg,#3b82f6,#ffffff);
+--text-main:#1f2937;
+--text-sub:#6b7280;
+--card-bg:#ffffff;
+--transition:all .35s cubic-bezier(.4,0,.2,1);
+}
 
-    .header { text-align:center; }
-    .header h1 { font-size:2.8rem; font-weight:900; }
-    .status-badge {
-      font-size:14px; font-weight:700; padding:10px 20px; border-radius:50px;
-      text-transform:uppercase; transition:all 0.3s ease; margin-top:8px;
-    }
-    .status-badge.online { background:#e8f5e9; color:#2e7d32; }
-    .status-badge.offline { background:#ffebee; color:#c62828; }
+*{box-sizing:border-box;margin:0;padding:0}
 
-    .input-group { display:flex; flex-direction:column; gap:12px; width:100%; }
-    input {
-      width:100%; padding:16px; border-radius:12px; border:2px solid #e5e7eb;
-      font-size:18px; font-weight:600; outline:none; transition:0.25s;
-    }
-    input:focus { border-color:#3b82f6; background:#f0f7ff; }
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#f0f4f8;
+font-family:'Pretendard',sans-serif;
+color:var(--text-main);
+}
 
-    .btn {
-      width:100%; padding:16px; border:none; border-radius:12px;
-      font-size:18px; font-weight:700; cursor:pointer; transition:0.2s;
-    }
-    .login-btn { background: linear-gradient(135deg,#3b82f6 0%,#2563eb 100%); color:#fff; }
-    .login-btn:hover { transform:translateY(-2px); }
+@keyframes viewTransition{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:none}
+}
 
-    .control-section { display:flex; flex-direction:column; gap:24px; width:100%; align-items:center; }
-    .switch-btn {
-      width:120px; height:120px; border-radius:50%;
-      border:none; background:#d32f2f; color:#fff;
-      font-size:24px; font-weight:900; cursor:pointer;
-      transition:all 0.25s ease;
-    }
-    .switch-btn.on { background:#10b981; }
+.container{width:100%;max-width:400px;padding:20px}
 
-    [data-hidden] { display:none !important; }
-  </style>
+.card{
+background:var(--card-bg);
+padding:40px;
+border-radius:28px;
+min-height:620px;
+display:flex;
+flex-direction:column;
+box-shadow:0 16px 48px rgba(0,0,0,0.08);
+position:relative;
+}
+
+.view-section{
+display:flex;
+flex-direction:column;
+flex:1;
+animation:viewTransition .4s;
+}
+
+.header{text-align:center;margin-bottom:30px}
+.header h1{font-size:2.8rem;font-weight:900;color:var(--text-main)}
+
+.status-badge{
+font-size:13px;
+font-weight:700;
+padding:8px 18px;
+border-radius:50px;
+margin-top:8px;
+display:inline-block;
+text-transform:uppercase;
+letter-spacing:0.5px
+}
+
+.online{background:#e8f5e9;color:#2e7d32}
+.offline{background:#ffebee;color:#c62828}
+
+.passcode-display{
+display:flex;
+gap:12px;
+justify-content:center;
+margin-bottom:20px
+}
+
+.passcode-dot{
+width:14px;
+height:14px;
+border-radius:50%;
+background:#e5e7eb;
+transition:.2s
+}
+
+.passcode-dot.filled{
+background:#3b82f6;
+transform:scale(1.2);
+box-shadow:0 0 8px rgba(59,130,246,0.5)
+}
+
+.keypad{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px 10px;
+width:100%;
+align-items:center;
+justify-items:center;
+height:auto;
+row-gap:26px
+}
+
+.keypad-btn{
+aspect-ratio:1;
+border-radius:50%;
+border:none;
+background:#f3f4f6;
+font-size:24px;
+font-weight:700;
+cursor:pointer;
+transition:all .2s ease;
+color:var(--text-main);
+font-family:'Pretendard',sans-serif;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+width:70px;
+height:70px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:0 auto;
+flex-shrink:0
+}
+
+.keypad-btn:hover{
+background:#e5e7eb;
+transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(0,0,0,0.12)
+}
+
+.keypad-btn:active{
+background:#d1d5db;
+transform:translateY(0)
+}
+
+.switch-container{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center
+}
+
+.switch-btn{
+width:180px;
+height:180px;
+border-radius:50%;
+border:none;
+background:#d32f2f;
+font-size:32px;
+font-weight:900;
+color:#fff;
+cursor:pointer;
+transition:all .25s ease;
+box-shadow:0 6px 20px rgba(211,47,47,0.3);
+font-family:'Pretendard',sans-serif
+}
+
+.switch-btn:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 28px rgba(211,47,47,0.4)
+}
+
+.switch-btn.on{
+background:#10b981;
+box-shadow:0 6px 20px rgba(16,185,129,0.3)
+}
+
+.switch-btn.on:hover{
+box-shadow:0 10px 28px rgba(16,185,129,0.4)
+}
+
+.theory-content{
+display:flex;
+flex-direction:column;
+gap:28px
+}
+
+.protocol-step{
+border-left:3px solid #3b82f6;
+padding-left:20px;
+transition:all .2s ease
+}
+
+.protocol-step:hover{
+border-left-color:#ec4899;
+transform:translateX(4px)
+}
+
+.label{
+font-size:12px;
+font-weight:800;
+color:#3b82f6;
+text-transform:uppercase;
+letter-spacing:1px;
+margin-bottom:4px
+}
+
+.desc{
+font-size:15px;
+font-weight:700;
+color:var(--text-main)
+}
+
+.nav-group{
+margin-top:auto;
+display:flex;
+flex-direction:column;
+gap:12px
+}
+
+.btn{
+width:100%;
+padding:12px;
+border-radius:50px;
+border:none;
+font-weight:700;
+cursor:pointer;
+transition:.3s;
+font-size:18px;
+font-family:'Pretendard',sans-serif;
+background:#e5e7eb;
+color:#374151;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.btn:hover{
+background:#d1d5db;
+transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+
+.btn-secondary{
+background:#e5e7eb;
+color:#374151;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.btn-secondary:hover{
+background:#d1d5db;
+transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+
+.btn-primary{
+background:#e5e7eb;
+color:#374151;
+border:none;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.btn-primary:hover{
+background:#d1d5db;
+transform:translateY(-2px);
+box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+
+[data-hidden]{display:none!important}
+</style>
 </head>
 <body>
+
   <div class="container">
     <div class="card">
-      <!-- Header -->
-      <div class="header">
-        <h1>HOMES</h1>
-        <div id="statusBadge" class="status-badge offline">Offline</div>
-      </div>
+      
+      <!-- 1. 인증 섹션 -->
+      <section id="view-auth" class="view-section">
+        <div class="header">
+          <h1>HOMES</h1>
+          <div class="status-badge offline">인증 절차</div>
+        </div>
+        <div class="passcode-display">
+          <div class="passcode-dot"></div><div class="passcode-dot"></div>
+          <div class="passcode-dot"></div><div class="passcode-dot"></div>
+        </div>
+        <div class="keypad">
+          <button class="keypad-btn">1</button><button class="keypad-btn">2</button><button class="keypad-btn">3</button>
+          <button class="keypad-btn">4</button><button class="keypad-btn">5</button><button class="keypad-btn">6</button>
+          <button class="keypad-btn">7</button><button class="keypad-btn">8</button><button class="keypad-btn">9</button>
+          <button class="keypad-btn" style="visibility:hidden"></button>
+          <button class="keypad-btn">0</button>
+          <button class="keypad-btn" id="btn-del">←</button>
+        </div>
+      </section>
 
-      <!-- Login -->
-      <div id="authBox" class="input-group">
-        <input id="passwordField" type="text" placeholder="비밀번호">
-        <button id="loginBtn" class="btn login-btn">로그인</button>
-      </div>
+      <!-- 2. 메인 제어 섹션 -->
+      <section id="view-main" class="view-section" data-hidden>
+        <div class="header">
+          <h1>HOMES</h1>
+          <div class="status-badge online">활성화됨</div>
+        </div>
+        <div class="switch-container">
+          <button id="main-switch" class="switch-btn">OFF</button>
+        </div>
+        <!-- 작동원리와 로그아웃 버튼을 하단에 동일한 스타일로 배치 -->
+        <div class="nav-group">
+          <button id="go-theory" class="btn btn-secondary">작동 원리</button>
+          <button onclick="location.reload()" class="btn btn-secondary">로그아웃</button>
+        </div>
+      </section>
 
-      <!-- Control -->
-      <div id="controlBox" class="control-section" data-hidden>
-        <button id="switchBtn" class="switch-btn">OFF</button>
-        <button id="logoutBtn" class="btn logout-btn">로그아웃</button>
-      </div>
+      <!-- 3. 작동 원리 섹션 -->
+      <section id="view-theory" class="view-section" data-hidden>
+        <div class="header" style="text-align: left;">
+          <h1 style="font-size: 2.2rem; line-height: 1;">시스템<br>작동원리</h1>
+        </div>
+        <div class="theory-content">
+          <div class="protocol-step">
+            <span class="label">PHASE 01</span>
+            <p class="desc">웹사이트에서 사용자의 입력을 감지</p>
+          </div>
+          <div class="protocol-step">
+            <span class="label">PHASE 02</span>
+            <p class="desc">입력된 데이터를 구글 싱가포르 서버로 전송</p>
+          </div>
+          <div class="protocol-step">
+            <span class="label">PHASE 03</span>
+            <p class="desc">ESP32(소형 컴퓨터)가 서버 데이터를 수신·분석한 뒤 제어 명령 생성</p>
+          </div>
+          <div class="protocol-step">
+            <span class="label">PHASE 04</span>
+            <p class="desc">명령을 받은 서보모터가 물리적으로 움직여 스위치를 제어</p>
+          </div>
+        </div>
+        <div class="nav-group">
+          <button id="back-to-main" class="btn btn-primary">홈으로 가기</button>
+        </div>
+      </section>
+
     </div>
   </div>
-
   <script type="module" src="app.js"></script>
+
 </body>
 </html>
-
-

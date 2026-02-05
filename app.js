@@ -1,125 +1,115 @@
-// app.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// Firebase 설정
+/* Firebase */
+
 const firebaseConfig = {
-apiKey: "AIzaSyCtaOb56D2Vr7tUiAFJ9SFIlQHpee5zJ_A",
+  apiKey: "AIzaSyCtaOb56D2Vr7tUiAFJ9SFIlQHpee5zJ_A",
   authDomain: "light-contorl-1.firebaseapp.com",
   databaseURL: "https://light-contorl-1-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "light-contorl-1",
   storageBucket: "light-contorl-1.firebasestorage.app",
   messagingSenderId: "629281372901",
-  appId: "1:629281372901:web:b1e2e396ede5a6865b720c",
-  measurementId: "G-3RMMV8GY81"
+  appId: "1:629281372901:web:b1e2e396ede5a6865b720c"
 };
-const app = initializeApp(firebaseConfig);
+
+initializeApp(firebaseConfig);
+
 const auth = getAuth();
-const db = getDatabase(app);
+const db = getDatabase();
 
-// HTML 요소
-const authBox = document.getElementById("authBox");
-const controlBox = document.getElementById("controlBox");
-const passwordField = document.getElementById("passwordField");
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const switchBtn = document.getElementById("switchBtn");
-const statusBadge = document.getElementById("statusBadge");
+/* 요소 */
 
-// 고정 이메일
+const switchBtn = document.getElementById("main-switch");
+
+/* 화면 */
+
+const PASS = "1980";
 const EMAIL = "sldpfy2@gmail.com";
+const REAL_PASSWORD = "adminplus";
 
-// 로그인 함수
-// 로그인 함수
-function handleLogin() {
-  const password = passwordField.value;
-  if (!password) return alert("비밀번호를 입력하세요");
+let code = "";
 
-  setPersistence(auth, browserSessionPersistence)
-    .then(() => signInWithEmailAndPassword(auth, EMAIL, password))
-    .then(() => {
-      alert("로그인 성공!");
-      passwordField.value = ""; // 입력 초기화
-      // 화면 전환은 onAuthStateChanged에서 자동 처리
-    })
-    .catch(err => {
-      // 비밀번호 틀리면 alert
-      alert("비밀번호가 틀렸습니다");
-      console.error(err);
-    });
+/* 뷰 전환 */
+
+function switchView(from, to) {
+  document.getElementById(from).setAttribute("data-hidden", "");
+  document.getElementById(to).removeAttribute("data-hidden");
 }
 
-// 로그인 상태 감지
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // 로그인 성공 시 UI 전환
-    authBox.setAttribute("data-hidden", "");
-    controlBox.removeAttribute("data-hidden");
-    statusBadge.className = "status-badge online";
-    statusBadge.textContent = "Online";
+/* 키패드 */
 
-    // DB 값 읽어서 버튼 초기화
-    onValue(ref(db, "/switch"), snapshot => {
-      const val = snapshot.val();
-      if (val === 1) {
-        switchBtn.classList.add("on");
-        switchBtn.textContent = "ON";
-      } else {
-        switchBtn.classList.remove("on");
-        switchBtn.textContent = "OFF";
-      }
+document.querySelectorAll(".keypad-btn").forEach(btn => {
+  btn.addEventListener("click", e => {
+    const v = e.target.textContent;
+
+    if (v === "←") code = code.slice(0, -1);
+    else if (code.length < 4 && v) code += v;
+
+    document.querySelectorAll(".passcode-dot").forEach((d, i) => {
+      d.classList.toggle("filled", i < code.length);
     });
 
-  } else {
-    // 로그아웃 시 UI 초기화
-    authBox.removeAttribute("data-hidden");
-    controlBox.setAttribute("data-hidden", "");
-    statusBadge.className = "status-badge offline";
-    statusBadge.textContent = "Offline";
-    switchBtn.classList.remove("on");
-    switchBtn.textContent = "OFF";
-  }
+    if (code.length === 4) handleLogin();
+  });
 });
 
+/* 로그인 */
 
-// 로그아웃 함수
-function handleLogout() {
-  signOut(auth)
+function handleLogin() {
+  if (code !== PASS) {
+    resetDots();
+    return;
+  }
+
+  setPersistence(auth, browserLocalPersistence)
+    .then(() => signInWithEmailAndPassword(auth, EMAIL, REAL_PASSWORD))
     .then(() => {
-      // 로그아웃 완료 후 UI 초기화
-      authBox.removeAttribute("data-hidden");
-      controlBox.setAttribute("data-hidden", "");
-      statusBadge.className = "status-badge offline";
-      statusBadge.textContent = "Offline";
-      switchBtn.classList.remove("on");
-      switchBtn.textContent = "OFF";
-      passwordField.value = "";
-    })
-    .catch(err => alert("로그아웃 실패: " + err.message));
+      switchView("view-auth", "view-main");
+      code = "";
+      resetDots();
+    });
 }
+
+function resetDots() {
+  code = "";
+  setTimeout(() => {
+    document.querySelectorAll(".passcode-dot").forEach(d => d.classList.remove("filled"));
+  }, 200);
+}
+
+/* 로그인 상태 */
+
+onAuthStateChanged(auth, user => {
+  if (!user) return;
+
+  onValue(ref(db, "/switch"), snap => {
+    const v = snap.val();
+    switchBtn.classList.toggle("on", v === 1);
+    switchBtn.textContent = v === 1 ? "ON" : "OFF";
+  });
+});
+
+/* 스위치 */
 
 switchBtn.addEventListener("click", () => {
-  console.log("switchBtn 클릭됨, currentUser:", auth.currentUser);
-  if (!auth.currentUser) return alert("로그인 후 사용 가능합니다");
+  if (!auth.currentUser) return;
 
-  const newState = switchBtn.classList.contains("on") ? 0 : 1;
-
-  // UI 즉시 변경
-  switchBtn.classList.toggle("on");
-  switchBtn.textContent = newState ? "ON" : "OFF";
-
-  // DB 쓰기
-  set(ref(db, "/switch"), newState)
-    .then(() => console.log("DB 값 변경됨:", newState))
-    .catch(err => console.error(err));
+  const next = switchBtn.classList.contains("on") ? 0 : 1;
+  set(ref(db, "/switch"), next);
 });
 
+/* 네비 */
 
-loginBtn.addEventListener("click", handleLogin);
-logoutBtn.addEventListener("click", handleLogout);
+document.getElementById("go-theory").onclick = () =>
+  switchView("view-main", "view-theory");
 
-
-//
-
-
+document.getElementById("back-to-main").onclick = () =>
+  switchView("view-theory", "view-main");
